@@ -27,7 +27,7 @@ export default function TabLayout() {
               overflow: "hidden",
               zIndex: 1,
             }}
-            intensity={100}
+            intensity={80}
             experimentalBlurMethod="dimezisBlurView"
           />
         ),
