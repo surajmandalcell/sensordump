@@ -109,3 +109,13 @@ export async function shareLogFile() {
     alert("An error occurred while sharing the log file");
   }
 }
+
+export async function cleanLogFile() {
+  try {
+    await writeAsStringAsync(logFilePath, "");
+    console.log("Log file cleared successfully");
+  } catch (error) {
+    console.error("Error clearing log file:", error);
+    throw new Error("Failed to clear log file");
+  }
+}
