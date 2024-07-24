@@ -15,7 +15,13 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
-        headerShown: false,
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: Colors[colorScheme ?? "light"].background,
+          elevation: 0,
+          shadowOpacity: 0,
+          borderBottomWidth: 0,
+        },
         tabBarStyle: {
           height: 60,
           paddingBottom: 8,
@@ -40,6 +46,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
+          headerTitle: " Sensor Dump ⏲",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? "home-sharp" : "home-outline"} color={color} />
           ),
