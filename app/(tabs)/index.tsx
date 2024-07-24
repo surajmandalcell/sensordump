@@ -73,23 +73,10 @@ export default function HomeScreen() {
 
   return (
     <ParallaxScrollView container_style={styles.container}>
-      <ThemedView style={styles.stepContainer}>
+      <ThemedView style={styles.textContainer}>
         <ThemedText type="default">Step 1: Select the sensors you want to log</ThemedText>
         <ThemedText type="default">Step 2: Click on the "Start Logging" button</ThemedText>
       </ThemedView>
-      <TouchableOpacity
-        style={[styles.fullWidthButton, logging ? styles.stopLoggingButton : null]}
-        onPress={handleLogging}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text style={styles.fullWidthButtonText}>
-            {logging ? "Stop Logging" : "Start Logging"}
-          </Text>
-        )}
-      </TouchableOpacity>
 
       <View style={[styles.sensorContainer, { backgroundColor: cardColor }]}>
         <ThemedText type="defaultSemiBold" style={styles.sensorHeaderText}>
@@ -115,6 +102,20 @@ export default function HomeScreen() {
           </View>
         ))}
       </View>
+
+      <TouchableOpacity
+        style={[styles.fullWidthButton, logging ? styles.stopLoggingButton : null]}
+        onPress={handleLogging}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text style={styles.fullWidthButtonText}>
+            {logging ? "Stop Logging" : "Start Logging"}
+          </Text>
+        )}
+      </TouchableOpacity>
     </ParallaxScrollView>
   );
 }
@@ -124,8 +125,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
   },
-  stepContainer: {
-    marginBottom: 16,
+  textContainer: {
+    marginBottom: 10,
   },
   fullWidthButton: {
     alignItems: "center",
@@ -133,6 +134,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginBottom: 24,
     borderRadius: 8,
+    marginTop: 10,
   },
   fullWidthButtonText: {
     color: "white",
@@ -145,7 +147,6 @@ const styles = StyleSheet.create({
   sensorContainer: {
     borderRadius: 10,
     overflow: "hidden",
-    marginBottom: 24,
   },
   sensorHeaderText: {
     fontSize: 20,

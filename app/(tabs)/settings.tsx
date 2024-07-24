@@ -105,7 +105,7 @@ const TabTwoScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create<Styles>({
+const styles = StyleSheet.create({
   headerImage: {
     bottom: -90,
     left: -50,
@@ -113,8 +113,9 @@ const styles = StyleSheet.create<Styles>({
   },
   listContainer: {
     borderRadius: 10,
-    marginHorizontal: 16,
     overflow: "hidden",
+    marginTop: 16,
+    marginHorizontal: 16,
   },
   settingButton: {
     flexDirection: "row",
@@ -146,16 +147,5 @@ const styles = StyleSheet.create<Styles>({
     height: StyleSheet.hairlineWidth,
   },
 });
-
-interface Styles {
-  headerImage: ViewStyle;
-  listContainer: ViewStyle;
-  settingButton: ViewStyle;
-  iconContainer: ViewStyle;
-  textContainer: ViewStyle;
-  title: TextStyle;
-  description: TextStyle;
-  separator: ViewStyle;
-}
 
 export default TabTwoScreen;
