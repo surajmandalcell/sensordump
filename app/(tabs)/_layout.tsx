@@ -55,9 +55,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: " Settings",
+          headerStyle: {
+            backgroundColor: colorScheme === "light" ? "#D0D0D0" : "#353636",
+            elevation: 0,
+            shadowOpacity: 0,
+            borderBottomWidth: 0,
+          },
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? "settings-sharp" : "settings-outline"} color={color} />
+            <TabBarIcon
+              name={focused ? "settings-sharp" : "settings-outline"}
+              color={color}
+            />
           ),
         }}
       />
