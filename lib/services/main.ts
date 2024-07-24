@@ -11,7 +11,7 @@ import { isAvailableAsync, shareAsync } from "expo-sharing";
 let accelerometerSubscription: any = null;
 const LOG_FILE_NAME = "logdata.txt";
 let logFilePath: string;
-let lastSessionEndTimestamp: string | null = null;
+let lastSessionEndTimestamp: number | null = null;
 
 export async function detectSensors(): Promise<{
   [key: string]: boolean | undefined;
@@ -51,7 +51,7 @@ async function initializeLogFile() {
     const lastLine = lines[lines.length - 1];
 
     if (!lastLine.startsWith("END,")) {
-      lastSessionEndTimestamp = new Date().toISOString();
+      lastSessionEndTimestamp = +new Date();
       const updatedContent = fileContent + `END,${lastSessionEndTimestamp}\n`;
       await writeAsStringAsync(logFilePath, updatedContent);
     }
@@ -67,7 +67,7 @@ async function appendToLogFile(data: string) {
 }
 
 export function startLogging({ interval } = { interval: 200 }) {
-  const startTimestamp = new Date().toISOString();
+  const startTimestamp = +new Date();
   appendToLogFile(`START,${startTimestamp}\n`);
 
   Accelerometer.setUpdateInterval(interval);
@@ -92,7 +92,7 @@ export async function stopLogging() {
     accelerometerSubscription = null;
   }
 
-  const endTimestamp = new Date().toISOString();
+  const endTimestamp = +new Date();
   await appendToLogFile(`END,${endTimestamp}\n`);
 }
 

@@ -13,9 +13,9 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        headerShown: true,
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
-        headerShown: true,
         headerStyle: {
           backgroundColor: Colors[colorScheme ?? "light"].background,
           elevation: 0,
