@@ -32,6 +32,9 @@ importers:
       expo-router:
         specifier: ~3.5.18
         version: 3.5.18(gkh2qess6mzcx7mi34dtj5rb44)
+      expo-sensors:
+        specifier: ~13.0.9
+        version: 13.0.9(expo@51.0.21(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9)))
       expo-splash-screen:
         specifier: ~0.27.5
         version: 0.27.5(expo-modules-autolinking@1.11.1)(expo@51.0.21(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9)))
@@ -2288,6 +2291,11 @@ packages:
         optional: true
       react-native-reanimated:
         optional: true
+
+  expo-sensors@13.0.9:
+    resolution: {integrity: sha512-yi/TERUP8dpsJWWRgjT+UuQ7PI604PMndwXh9iBnfNO7q+dtoKZKsVSNJw61IKLNflbtCAyJxgmzPoe/JDT04Q==}
+    peerDependencies:
+      expo: '*'
 
   expo-splash-screen@0.27.5:
     resolution: {integrity: sha512-9rdZuLkFCfgJBxrheUsOEOIW6Rp+9NVlpSE0hgXQwbTCLTncf00IHSE8/L2NbFyeDLNjof1yZBppaV7tXHRUzA==}
@@ -7906,6 +7914,11 @@ snapshots:
       - react-native
       - supports-color
       - typescript
+
+  expo-sensors@13.0.9(expo@51.0.21(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))):
+    dependencies:
+      expo: 51.0.21(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))
+      invariant: 2.2.4
 
   expo-splash-screen@0.27.5(expo-modules-autolinking@1.11.1)(expo@51.0.21(@babel/core@7.24.9)(@babel/preset-env@7.24.8(@babel/core@7.24.9))):
     dependencies:
