@@ -14,6 +14,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
         headerShown: false,
         tabBarStyle: {
           height: 60,
@@ -24,6 +25,8 @@ export default function TabLayout() {
           <BlurView
             style={{
               ...StyleSheet.absoluteFillObject,
+              backgroundColor:
+                colorScheme === "light" ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 1)",
               overflow: "hidden",
               zIndex: 1,
             }}
@@ -38,10 +41,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "home-sharp" : "home-outline"}
-              color={color}
-            />
+            <TabBarIcon name={focused ? "home-sharp" : "home-outline"} color={color} />
           ),
         }}
       />
@@ -50,10 +50,7 @@ export default function TabLayout() {
         options={{
           title: "Settings",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "settings-sharp" : "settings-outline"}
-              color={color}
-            />
+            <TabBarIcon name={focused ? "settings-sharp" : "settings-outline"} color={color} />
           ),
         }}
       />
