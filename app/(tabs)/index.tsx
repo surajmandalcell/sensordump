@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Switch, TouchableOpacity, Text } from "react-native";
 
-import { startLogging, stopLogging, handlePermissions, detectSensors } from "@/lib/services/main";
+import {
+  startLogging,
+  stopLogging,
+  handlePermissions,
+  detectSensors,
+} from "@/lib/services/main";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { HelloWave } from "@/components/IconWave";
 import { ThemedText } from "@/components/ThemedText";
@@ -52,11 +57,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <ParallaxScrollView extra_padding>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">SensorDump</ThemedText>
-        <HelloWave />
-      </ThemedView>
+    <ParallaxScrollView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="medium">Step 1: Select the sensors you want to log</ThemedText>
         <ThemedText type="medium">Step 2: Click on the "Start Logging" button</ThemedText>
@@ -65,7 +66,9 @@ export default function HomeScreen() {
         style={[styles.fullWidthButton, logging ? styles.stopLoggingButton : null]}
         onPress={handleLogging}
       >
-        <Text style={styles.fullWidthButtonText}>{logging ? "Stop Logging" : "Start Logging"}</Text>
+        <Text style={styles.fullWidthButtonText}>
+          {logging ? "Stop Logging" : "Start Logging"}
+        </Text>
       </TouchableOpacity>
 
       <ThemedHorizontalLine />
@@ -75,7 +78,9 @@ export default function HomeScreen() {
         {Object.keys(sensorStates).map((sensor) => (
           <View key={sensor} style={styles.sensorToggle}>
             <ThemedText>
-              {sensor === "gps" ? sensor.toUpperCase() : sensor.charAt(0).toUpperCase() + sensor.slice(1)}
+              {sensor === "gps"
+                ? sensor.toUpperCase()
+                : sensor.charAt(0).toUpperCase() + sensor.slice(1)}
             </ThemedText>
             <ThemedSwitch
               onValueChange={() => toggleSensor(sensor as keyof typeof sensor_states)}
