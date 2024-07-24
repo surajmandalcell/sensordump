@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Switch, TouchableOpacity, Text } from "react-native";
 
+import { startLogging, stopLogging, handlePermissions, detectSensors } from "@/lib/services/main";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { HelloWave } from "@/components/IconWave";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-
-import {
-  startLogging,
-  stopLogging,
-  handlePermissions,
-  detectSensors,
-} from "@/lib/services/main";
+import { ThemedSwitch } from "@/components/ThemedSwitch";
+import ThemedHorizontalLine from "@/components/ThemedHorizontalLine";
 
 export default function HomeScreen() {
   const sensor_states = {
@@ -25,8 +21,7 @@ export default function HomeScreen() {
   };
 
   const [logging, setLogging] = useState(false);
-  const [sensorStates, setSensorStates] =
-    useState<typeof sensor_states>(sensor_states);
+  const [sensorStates, setSensorStates] = useState<typeof sensor_states>(sensor_states);
 
   const toggleSensor = (sensor: keyof typeof sensor_states) => {
     setSensorStates((prev) => ({ ...prev, [sensor]: !prev[sensor] }));
@@ -63,42 +58,29 @@ export default function HomeScreen() {
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="medium">
-          Step 1: Select the sensors you want to log
-        </ThemedText>
-        <ThemedText type="medium">
-          Step 2: Click on the "Start Logging" button
-        </ThemedText>
+        <ThemedText type="medium">Step 1: Select the sensors you want to log</ThemedText>
+        <ThemedText type="medium">Step 2: Click on the "Start Logging" button</ThemedText>
       </ThemedView>
       <TouchableOpacity
-        style={[
-          styles.fullWidthButton,
-          logging ? styles.stopLoggingButton : null,
-        ]}
+        style={[styles.fullWidthButton, logging ? styles.stopLoggingButton : null]}
         onPress={handleLogging}
       >
-        <Text style={styles.fullWidthButtonText}>
-          {logging ? "Stop Logging" : "Start Logging"}
-        </Text>
+        <Text style={styles.fullWidthButtonText}>{logging ? "Stop Logging" : "Start Logging"}</Text>
       </TouchableOpacity>
-      <View style={styles.horizontalLine} />
+
+      <ThemedHorizontalLine />
+
       <View style={styles.sensorContainer}>
         <ThemedText type="defaultSemiBold">Available Sensors</ThemedText>
         {Object.keys(sensorStates).map((sensor) => (
           <View key={sensor} style={styles.sensorToggle}>
             <ThemedText>
-              {sensor === "gps"
-                ? sensor.toUpperCase()
-                : sensor.charAt(0).toUpperCase() + sensor.slice(1)}
+              {sensor === "gps" ? sensor.toUpperCase() : sensor.charAt(0).toUpperCase() + sensor.slice(1)}
             </ThemedText>
-            <Switch
-              onValueChange={() =>
-                toggleSensor(sensor as keyof typeof sensor_states)
-              }
+            <ThemedSwitch
+              onValueChange={() => toggleSensor(sensor as keyof typeof sensor_states)}
               value={sensorStates[sensor as keyof typeof sensor_states]}
-              disabled={
-                sensorStates[sensor as keyof typeof sensor_states] === undefined
-              }
+              disabled={sensorStates[sensor as keyof typeof sensor_states] === undefined}
             />
           </View>
         ))}
@@ -149,6 +131,7 @@ const styles = StyleSheet.create({
   },
   horizontalLine: {
     borderBottomColor: "#ececec",
+    opacity: 0.2,
     borderBottomWidth: 1,
     alignSelf: "center",
     width: "100%", // Adjust width as needed
