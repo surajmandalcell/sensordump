@@ -38,7 +38,7 @@ export function ThemedSwitch({
 
   const moveToggle = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [2, 22],
+    outputRange: [2, 16],
   });
 
   const bgColor = animatedValue.interpolate({
@@ -74,26 +74,24 @@ export function ThemedSwitch({
 
 const styles = StyleSheet.create({
   toggleContainer: {
-    width: 41, // Reduced from 51
-    height: 25, // Reduced from 31
-    borderRadius: 12.5, // Adjusted for new height
-    padding: 1.6, // Reduced from 2
+    width: 41,
+    height: 25,
+    borderRadius: 12.5,
+    padding: 1.6,
   },
   toggleWheel: {
-    width: 22, // Reduced from 27
-    height: 22, // Reduced from 27
+    width: 22,
+    height: 22,
     backgroundColor: "white",
-    borderRadius: 11, // Half of new width/height
+    borderRadius: 11,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 1.6, // Slightly reduced shadow
+      height: 1.6,
     },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 1.2, // Slightly reduced elevation
-    marginLeft: 20,
-    marginRight: -20,
+    elevation: 1.2,
   },
   disabledTrack: {
     opacity: 0.5,
