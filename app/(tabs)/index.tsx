@@ -1,20 +1,27 @@
-import { Image, StyleSheet, Platform, View, Switch } from "react-native";
-import { HelloWave } from "@/components/IconWave";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Switch, TouchableOpacity, Text } from "react-native";
+
 import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { HelloWave } from "@/components/IconWave";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { useState } from "react";
+
+import {
+  startLogging,
+  stopLogging,
+  handlePermissions,
+  detectSensors,
+} from "@/lib/services/main";
 
 export default function HomeScreen() {
   const sensor_states = {
-    gps: false,
-    accelerometer: false,
-    gyroscope: false,
-    magnetometer: false,
-    ambientlight: false,
-    proximity: false,
-    barometer: false,
+    gps: undefined,
+    accelerometer: undefined,
+    gyroscope: undefined,
+    magnetometer: undefined,
+    ambientlight: undefined,
+    proximity: undefined,
+    barometer: undefined,
   };
 
   const [logging, setLogging] = useState(false);
@@ -23,6 +30,30 @@ export default function HomeScreen() {
 
   const toggleSensor = (sensor: keyof typeof sensor_states) => {
     setSensorStates((prev) => ({ ...prev, [sensor]: !prev[sensor] }));
+  };
+
+  useEffect(() => {
+    async function callDetectSensors() {
+      const sensors = await detectSensors();
+      setSensorStates({ ...sensor_states, ...sensors });
+    }
+    callDetectSensors();
+  }, []);
+
+  useEffect(() => {
+    async function requestPermissions() {
+      await handlePermissions(); // Ensure permissions are requested at start
+    }
+    requestPermissions();
+  }, []);
+
+  const handleLogging = () => {
+    setLogging(!logging);
+    if (!logging) {
+      startLogging(); // Start logging sensor data
+    } else {
+      stopLogging(); // Stop logging sensor data
+    }
   };
 
   return (
@@ -39,17 +70,17 @@ export default function HomeScreen() {
           Step 2: Click on the "Start Logging" button
         </ThemedText>
       </ThemedView>
-      <View style={styles.loggingButton}>
-        <View style={styles.logingButton_textWithLabel}>
-          <ThemedText>Start Logging</ThemedText>
-          <Ionicons
-            name="cloud-upload-outline"
-            size={18}
-            color={logging ? "green" : "grey"}
-          />
-        </View>
-        <Switch onValueChange={() => setLogging(!logging)} value={logging} />
-      </View>
+      <TouchableOpacity
+        style={[
+          styles.fullWidthButton,
+          logging ? styles.stopLoggingButton : null,
+        ]}
+        onPress={handleLogging}
+      >
+        <Text style={styles.fullWidthButtonText}>
+          {logging ? "Stop Logging" : "Start Logging"}
+        </Text>
+      </TouchableOpacity>
       <View style={styles.horizontalLine} />
       <View style={styles.sensorContainer}>
         <ThemedText type="defaultSemiBold">Available Sensors</ThemedText>
@@ -65,6 +96,9 @@ export default function HomeScreen() {
                 toggleSensor(sensor as keyof typeof sensor_states)
               }
               value={sensorStates[sensor as keyof typeof sensor_states]}
+              disabled={
+                sensorStates[sensor as keyof typeof sensor_states] === undefined
+              }
             />
           </View>
         ))}
@@ -89,17 +123,19 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  loggingButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  fullWidthButton: {
     alignItems: "center",
-    padding: 10,
+    backgroundColor: "#007AFF", // iOS blue color for start
+    paddingVertical: 10,
     marginTop: 20,
+    borderRadius: 5,
   },
-  logingButton_textWithLabel: {
-    gap: 10,
-    flexDirection: "row",
-    alignItems: "center",
+  fullWidthButtonText: {
+    color: "white",
+    fontSize: 18,
+  },
+  stopLoggingButton: {
+    backgroundColor: "#D32F2F", // Elegant red color for stop
   },
   sensorContainer: {
     padding: 10,
@@ -112,10 +148,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   horizontalLine: {
-    borderBottomColor: "#ececec", // Choose color that fits your design
+    borderBottomColor: "#ececec",
     borderBottomWidth: 1,
     alignSelf: "center",
-    marginVertical: 0, // Adjust spacing to your liking
-    width: "60%", // Adjust width as needed
+    width: "100%", // Adjust width as needed
+    marginVertical: 10,
   },
 });
