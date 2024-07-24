@@ -9,7 +9,7 @@ import {
   useColorScheme,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { cleanLogFile, shareLogFile } from "@/lib/services/main";
+import { cleanLogFile, shareLogFile } from "@/lib/main";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 
 // Define color schemes

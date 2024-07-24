@@ -8,7 +8,7 @@ import {
   handlePermissions,
   detectSensors,
   SensorState,
-} from "@/lib/services/main";
+} from "@/lib/main";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
