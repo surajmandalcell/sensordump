@@ -92,6 +92,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 1.2, // Slightly reduced elevation
+    marginLeft: 20,
+    marginRight: -20,
   },
   disabledTrack: {
     opacity: 0.5,
