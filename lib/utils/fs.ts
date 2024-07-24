@@ -3,9 +3,9 @@ import {
   readDirectoryAsync,
   makeDirectoryAsync,
   documentDirectory,
+  getInfoAsync,
   EncodingType,
   StorageAccessFramework,
-  getInfoAsync,
 } from "expo-file-system";
 import { Platform } from "react-native";
 
@@ -13,14 +13,17 @@ let baseDirectory: string;
 
 export async function initializeBaseDirectory() {
   if (Platform.OS === "android") {
-    const permissions =
-      await StorageAccessFramework.requestDirectoryPermissionsAsync();
+    const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+
     if (permissions.granted) {
+      console.log("Permission granted");
       baseDirectory = permissions.directoryUri;
+      console.log("Base directory", baseDirectory);
     } else {
       throw new Error("Storage permission not granted");
     }
   } else {
+    console.log("Platform is not android");
     baseDirectory = documentDirectory! + "/Sensordump";
   }
 
@@ -37,9 +40,7 @@ export async function initializeBaseDirectory() {
 
 export async function getLastLogNumber(): Promise<number> {
   const files = await readDirectoryAsync(baseDirectory);
-  const logFiles = files.filter(
-    (file) => file.startsWith("dataLog") && file.endsWith(".csv")
-  );
+  const logFiles = files.filter((file) => file.startsWith("dataLog") && file.endsWith(".csv"));
 
   if (logFiles.length === 0) {
     return 0;
@@ -56,9 +57,7 @@ export async function getLastLogNumber(): Promise<number> {
   return 0;
 }
 
-export async function createNewLogFile(
-  currentLogNumber: number
-): Promise<string> {
+export async function createNewLogFile(currentLogNumber: number): Promise<string> {
   const fileName = `dataLog${currentLogNumber.toString().padStart(5, "0")}.csv`;
   const filePath = `${baseDirectory}/${fileName}`;
 
