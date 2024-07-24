@@ -57,7 +57,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <ParallaxScrollView>
+    <ParallaxScrollView container_style={{ paddingHorizontal: 14 }}>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="medium">Step 1: Select the sensors you want to log</ThemedText>
         <ThemedText type="medium">Step 2: Click on the "Start Logging" button</ThemedText>
