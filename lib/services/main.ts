@@ -146,7 +146,7 @@ async function appendToLogFile(data: string) {
   await writeAsStringAsync(logFilePath, updatedContent);
 }
 
-export function startLogging({
+export async function startLogging({
   interval,
   activeSensors,
 }: {
@@ -154,7 +154,7 @@ export function startLogging({
   activeSensors: SensorState;
 }) {
   const startTimestamp = +new Date();
-  appendToLogFile(`START,${startTimestamp}\n`);
+  await appendToLogFile(`START,${startTimestamp}\n`);
 
   // Generate dynamic headers based on active sensors
   let headers = "Date,Time";
@@ -166,7 +166,7 @@ export function startLogging({
   if (activeSensors.light) headers += ",Illuminance";
   headers += ",SampleRate\n";
 
-  appendToLogFile(headers);
+  await appendToLogFile(headers);
 
   const updateInterval = interval;
 

@@ -30,7 +30,6 @@ export default function HomeScreen() {
   const [sensorStates, setSensorStates] = useState<SensorState>(initialSensorStates);
   const [availableSensors, setAvailableSensors] = useState<SensorState>(initialSensorStates);
 
-  const backgroundColor = useThemeColor({ light: "#F2F2F7", dark: "#1C1C1E" });
   const cardColor = useThemeColor({ light: "#FFFFFF", dark: "#2C2C2E" });
   const separatorColor = useThemeColor({ light: "#C6C6C8", dark: "#38383A" });
   const textColor = useThemeColor({ light: "#000000", dark: "#FFFFFF" });
@@ -59,7 +58,7 @@ export default function HomeScreen() {
     setIsLoading(true);
     try {
       if (!logging) {
-        startLogging({ interval: 200, activeSensors: sensorStates });
+        await startLogging({ interval: 200, activeSensors: sensorStates });
       } else {
         await stopLogging();
       }
