@@ -1,19 +1,18 @@
-import {
-  writeAsStringAsync,
-  readDirectoryAsync,
-  makeDirectoryAsync,
-  documentDirectory,
-  getInfoAsync,
-  EncodingType,
-  StorageAccessFramework,
-} from "expo-file-system";
+import { getInfoAsync, EncodingType, StorageAccessFramework } from "expo-file-system";
 import { Platform } from "react-native";
+
+const {
+  requestDirectoryPermissionsAsync,
+  readDirectoryAsync,
+  writeAsStringAsync,
+  makeDirectoryAsync,
+} = StorageAccessFramework;
 
 let baseDirectory: string;
 
 export async function initializeBaseDirectory() {
   if (Platform.OS === "android") {
-    const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+    const permissions = await requestDirectoryPermissionsAsync();
 
     if (permissions.granted) {
       console.log("Permission granted");
@@ -22,16 +21,13 @@ export async function initializeBaseDirectory() {
     } else {
       throw new Error("Storage permission not granted");
     }
-  } else {
-    console.log("Platform is not android");
-    baseDirectory = documentDirectory! + "/Sensordump";
   }
 
   const metaDataDir = await getInfoAsync(baseDirectory);
   const isDir = metaDataDir.isDirectory;
   if (!isDir) {
     try {
-      await makeDirectoryAsync(baseDirectory, { intermediates: true });
+      await makeDirectoryAsync(baseDirectory, "Sensordump");
     } catch (e) {
       console.info("ERROR", e);
     }
