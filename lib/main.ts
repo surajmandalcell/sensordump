@@ -14,6 +14,7 @@ import {
 } from "expo-file-system";
 import { isAvailableAsync, shareAsync } from "expo-sharing";
 import { format } from "date-fns";
+import * as Location from "expo-location";
 
 let accelerometerSubscription: any = null;
 let gyroscopeSubscription: any = null;
@@ -21,6 +22,7 @@ let magnetometerSubscription: any = null;
 let barometerSubscription: any = null;
 let pedometerSubscription: any = null;
 let lightSubscription: any = null;
+let locationSubscription: any = null;
 
 const LOG_FILE_NAME = "logdata.txt";
 let logFilePath: string;
@@ -39,20 +41,14 @@ export type SensorState = {
 
 export async function detectSensors(): Promise<SensorState> {
   const sensors: SensorState = {
-    gps: false, // Assume GPS is always available for this example
-    accelerometer: false,
-    gyroscope: false,
-    magnetometer: false,
-    barometer: false,
-    pedometer: false,
-    light: false,
+    gps: await Location.hasServicesEnabledAsync(),
+    accelerometer: await Accelerometer.isAvailableAsync(),
+    gyroscope: await Gyroscope.isAvailableAsync(),
+    magnetometer: await Magnetometer.isAvailableAsync(),
+    barometer: await Barometer.isAvailableAsync(),
+    pedometer: await Pedometer.isAvailableAsync(),
+    light: await LightSensor.isAvailableAsync(),
   };
-  sensors.accelerometer = await Accelerometer.isAvailableAsync();
-  sensors.gyroscope = await Gyroscope.isAvailableAsync();
-  sensors.magnetometer = await Magnetometer.isAvailableAsync();
-  sensors.barometer = await Barometer.isAvailableAsync();
-  sensors.pedometer = await Pedometer.isAvailableAsync();
-  sensors.light = await LightSensor.isAvailableAsync();
   return sensors;
 }
 
@@ -73,6 +69,7 @@ export async function handlePermissions() {
   let { granted: baroGranted } = await Barometer.getPermissionsAsync();
   let { granted: pedoGranted } = await Pedometer.getPermissionsAsync();
   let { granted: lightGranted } = await LightSensor.getPermissionsAsync();
+  let { granted: locationGranted } = await Location.getForegroundPermissionsAsync();
 
   if (!accGranted) {
     const response = await Accelerometer.requestPermissionsAsync();
@@ -114,6 +111,13 @@ export async function handlePermissions() {
     status.light = response.granted;
   } else {
     status.light = true;
+  }
+
+  if (!locationGranted) {
+    const response = await Location.requestForegroundPermissionsAsync();
+    status.gps = response.granted;
+  } else {
+    status.gps = true;
   }
 
   await initializeLogFile();
@@ -158,6 +162,7 @@ export async function startLogging({
 
   // Generate dynamic headers based on active sensors
   let headers = "Date,Time";
+  if (activeSensors.gps) headers += ",Latitude,Longitude,Altitude,Speed";
   if (activeSensors.accelerometer) headers += ",AccX,AccY,AccZ";
   if (activeSensors.gyroscope) headers += ",GyroX,GyroY,GyroZ";
   if (activeSensors.magnetometer) headers += ",MagX,MagY,MagZ";
@@ -192,6 +197,7 @@ export async function startLogging({
   let baroData = { pressure: 0 };
   let steps = 0;
   let lightData = { illuminance: 0 };
+  let gpsData = { latitude: 0, longitude: 0, altitude: 0, speed: 0 };
 
   if (activeSensors.accelerometer) {
     accelerometerSubscription = Accelerometer.addListener((data) => {
@@ -229,6 +235,24 @@ export async function startLogging({
     });
   }
 
+  if (activeSensors.gps) {
+    locationSubscription = await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: updateInterval,
+        distanceInterval: 1, // Update every 1 meter
+      },
+      (location) => {
+        gpsData = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          altitude: location.coords.altitude || 0,
+          speed: location.coords.speed || 0,
+        };
+      }
+    );
+  }
+
   loggingInterval = setInterval(async () => {
     const now = new Date();
     const rtcDate = format(now, "MM/dd/yyyy");
@@ -236,6 +260,11 @@ export async function startLogging({
 
     let logData = `${rtcDate},${rtcTime}`;
 
+    if (activeSensors.gps) {
+      logData += `,${gpsData.latitude.toFixed(6)},${gpsData.longitude.toFixed(
+        6
+      )},${gpsData.altitude.toFixed(2)},${gpsData.speed.toFixed(2)}`;
+    }
     if (activeSensors.accelerometer) {
       logData += `,${accData.x.toFixed(2)},${accData.y.toFixed(2)},${accData.z.toFixed(2)}`;
     }
@@ -259,6 +288,7 @@ export async function startLogging({
 
     logData += `,${(1000 / updateInterval).toFixed(3)}\n`;
 
+    console.log(logData);
     await appendToLogFile(logData);
   }, updateInterval);
 }
@@ -287,6 +317,10 @@ export async function stopLogging(): Promise<boolean> {
   if (lightSubscription) {
     lightSubscription.remove();
     lightSubscription = null;
+  }
+  if (locationSubscription) {
+    locationSubscription.remove();
+    locationSubscription = null;
   }
 
   if (loggingInterval) {
