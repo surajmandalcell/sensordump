@@ -20,9 +20,9 @@ export default function HomeScreen() {
     accelerometer: undefined,
     gyroscope: undefined,
     magnetometer: undefined,
-    ambientlight: undefined,
-    proximity: undefined,
+    light: undefined,
     barometer: undefined,
+    pedometer: undefined,
   };
 
   const [logging, setLogging] = useState(false);
