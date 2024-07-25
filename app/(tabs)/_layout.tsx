@@ -46,7 +46,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          headerTitle: " Sensor Dump ⏲",
+          headerTitle: "  Sensor Dump",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? "home-sharp" : "home-outline"} color={color} />
           ),
