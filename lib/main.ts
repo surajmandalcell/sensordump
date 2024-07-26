@@ -15,6 +15,8 @@ import {
 import { isAvailableAsync, shareAsync } from "expo-sharing";
 import { format } from "date-fns";
 import * as Location from "expo-location";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+
 import {
   calculateAOAandSSA,
   getAngleOfAttack,
@@ -164,6 +166,8 @@ export async function startLogging({
   interval: number;
   activeSensors: SensorState;
 }) {
+  await activateKeepAwakeAsync(); // Prevent the screen from sleeping
+
   const startTimestamp = +new Date();
   await appendToLogFile(`START,${startTimestamp}\n`);
 
@@ -255,9 +259,8 @@ export async function startLogging({
   if (activeSensors.gps) {
     locationSubscription = await Location.watchPositionAsync(
       {
-        accuracy: Location.Accuracy.BestForNavigation,
+        accuracy: Location.Accuracy.BestForNavigation, // lvl 6, higest accuracy
         timeInterval: updateInterval,
-        distanceInterval: 1, // Update every 1 meter
       },
       (location) => {
         gpsData = {
@@ -391,6 +394,8 @@ export async function stopLogging(): Promise<boolean> {
 
   const endTimestamp = +new Date();
   await appendToLogFile(`END,${endTimestamp}\n`);
+
+  deactivateKeepAwake(); // Allow the screen to sleep again
 
   // Ensure the END timestamp is written
   try {
