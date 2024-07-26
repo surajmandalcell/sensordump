@@ -30,7 +30,7 @@ export default function HomeScreen() {
   const [sensorStates, setSensorStates] = useState<SensorState>(initialSensorStates);
   const [availableSensors, setAvailableSensors] = useState<SensorState>(initialSensorStates);
 
-  const cardColor = useThemeColor({ light: "#FFFFFF", dark: "#2C2C2E" });
+  const cardColor = useThemeColor({ light: "#f3f3f3", dark: "#2C2C2E" });
   const separatorColor = useThemeColor({ light: "#C6C6C8", dark: "#38383A" });
   const textColor = useThemeColor({ light: "#000000", dark: "#FFFFFF" });
 
