@@ -162,7 +162,8 @@ export async function startLogging({
 
   // Generate dynamic headers based on active sensors
   let headers = "Date,Time";
-  if (activeSensors.gps) headers += ",Latitude,Longitude,Altitude,Speed";
+  if (activeSensors.gps)
+    headers += ",Latitude,Longitude,Altitude,Speed,Accuracy,Heading,AltitudeAccuracy";
   if (activeSensors.accelerometer) headers += ",AccX,AccY,AccZ";
   if (activeSensors.gyroscope) headers += ",GyroX,GyroY,GyroZ";
   if (activeSensors.magnetometer) headers += ",MagX,MagY,MagZ";
@@ -274,7 +275,11 @@ export async function startLogging({
     if (activeSensors.gps) {
       logData += `,${gpsData.latitude.toFixed(6)},${gpsData.longitude.toFixed(
         6
-      )},${gpsData.altitude.toFixed(2)},${gpsData.speed.toFixed(2)}`;
+      )},${gpsData.altitude.toFixed(2)},${gpsData.speed.toFixed(
+        2
+      )},${gpsData.accuracy.toFixed(2)},${gpsData.heading.toFixed(
+        2
+      )},${gpsData.altitudeAccuracy.toFixed(2)}`;
     }
     if (activeSensors.accelerometer) {
       logData += `,${accData.x.toFixed(2)},${accData.y.toFixed(2)},${accData.z.toFixed(2)}`;
