@@ -15,6 +15,13 @@ import {
 import { isAvailableAsync, shareAsync } from "expo-sharing";
 import { format } from "date-fns";
 import * as Location from "expo-location";
+import {
+  calculateAOAandSSA,
+  getAngleOfAttack,
+  getSideslipAngle,
+  getWindVelocity,
+  updateWindEstimate,
+} from "./estimation";
 
 let accelerometerSubscription: any = null;
 let gyroscopeSubscription: any = null;
@@ -170,6 +177,7 @@ export async function startLogging({
   if (activeSensors.barometer) headers += ",Pressure";
   if (activeSensors.pedometer) headers += ",Steps";
   if (activeSensors.light) headers += ",Illuminance";
+  headers += ",WindSpeed,WindNorth,WindEast,WindDown,AOA,SSA";
   headers += ",SampleRate\n";
 
   await appendToLogFile(headers);
@@ -302,11 +310,45 @@ export async function startLogging({
       logData += `,${lightData.illuminance.toFixed(2)}`;
     }
 
-    logData += `,${(1000 / updateInterval).toFixed(3)}\n`;
+    logData += `,${(1000 / updateInterval).toFixed(3)}`;
 
     // FIXME: Add more data processing here
-    // Estimate wind speed
-    console.log("Wind speed:");
+    // Estimate wind speed, AOA, and SSA
+    const aircraftVelocity = {
+      north: gpsData.speed * Math.cos(gpsData.heading),
+      east: gpsData.speed * Math.sin(gpsData.heading),
+      down: 0, // Assuming level flight, adjust if you have vertical speed data
+    };
+
+    const aircraftAttitude = {
+      roll: accData.x, // This is a simplification, you may need to calculate actual roll
+      pitch: accData.y, // This is a simplification, you may need to calculate actual pitch
+      yaw: gpsData.heading,
+    };
+
+    // Update wind estimate
+    updateWindEstimate(aircraftVelocity, aircraftAttitude, gpsData.speed);
+
+    // Calculate AOA and SSA
+    calculateAOAandSSA(aircraftVelocity, aircraftAttitude);
+
+    // Get the estimated values
+    const windVelocity = getWindVelocity();
+    const aoa = getAngleOfAttack();
+    const ssa = getSideslipAngle();
+
+    // Calculate wind speed
+    const windSpeed = Math.sqrt(
+      windVelocity.north ** 2 + windVelocity.east ** 2 + windVelocity.down ** 2
+    );
+
+    // Add estimated values to log data
+    logData += `,${windSpeed.toFixed(2)},${windVelocity.north.toFixed(
+      2
+    )},${windVelocity.east.toFixed(2)},${windVelocity.down.toFixed(2)}`;
+    logData += `,${((aoa * 180) / Math.PI).toFixed(2)},${((ssa * 180) / Math.PI).toFixed(2)}`;
+
+    logData += "\n";
 
     await appendToLogFile(logData);
   }, updateInterval);
