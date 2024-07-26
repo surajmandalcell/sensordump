@@ -197,7 +197,15 @@ export async function startLogging({
   let baroData = { pressure: 0 };
   let steps = 0;
   let lightData = { illuminance: 0 };
-  let gpsData = { latitude: 0, longitude: 0, altitude: 0, speed: 0 };
+  let gpsData = {
+    latitude: 0,
+    longitude: 0,
+    altitude: 0,
+    speed: 0,
+    accuracy: 0,
+    heading: 0,
+    altitudeAccuracy: 0,
+  };
 
   if (activeSensors.accelerometer) {
     accelerometerSubscription = Accelerometer.addListener((data) => {
@@ -244,10 +252,13 @@ export async function startLogging({
       },
       (location) => {
         gpsData = {
+          accuracy: location.coords.accuracy || 0,
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
-          altitude: location.coords.altitude || 0,
           speed: location.coords.speed || 0,
+          heading: location.coords.heading || 0,
+          altitude: location.coords.altitude || 0,
+          altitudeAccuracy: location.coords.altitudeAccuracy || 0,
         };
       }
     );
@@ -288,7 +299,10 @@ export async function startLogging({
 
     logData += `,${(1000 / updateInterval).toFixed(3)}\n`;
 
-    console.log(logData);
+    // FIXME: Add more data processing here
+    // Estimate wind speed
+    console.log("Wind speed:");
+
     await appendToLogFile(logData);
   }, updateInterval);
 }
