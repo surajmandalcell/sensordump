@@ -15,8 +15,12 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["location", "fetch"]
-      }
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
+      },
+      "bundleIdentifier": "com.surajmandalcell.sensordump"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +28,9 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.surajmandalcell.sensordump",
-      "permissions": ["ACCESS_BACKGROUND_LOCATION"]
+      "permissions": [
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
     },
     "web": {
       "bundler": "metro",

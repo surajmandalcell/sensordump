@@ -19,9 +19,9 @@ const initialSensorStates: SensorState = {
   accelerometer: false,
   gyroscope: false,
   magnetometer: false,
-  light: false,
   barometer: false,
   pedometer: false,
+  light: false,
 };
 
 export default function HomeScreen() {
@@ -42,7 +42,12 @@ export default function HomeScreen() {
     async function callDetectSensors() {
       const sensors = await detectSensors();
       setAvailableSensors(sensors);
-      setSensorStates(sensors);
+      setSensorStates({
+        ...sensors,
+        barometer: false,
+        pedometer: false,
+        light: false,
+      });
     }
     callDetectSensors();
   }, []);
