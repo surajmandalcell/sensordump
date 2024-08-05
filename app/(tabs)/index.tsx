@@ -13,30 +13,13 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedSwitch } from "@/components/ThemedSwitch";
-
-const initialSensorStates: SensorState = {
-  gps: false,
-  accelerometer: false,
-  gyroscope: false,
-  magnetometer: false,
-  barometer: false,
-  pedometer: false,
-  light: false,
-};
+import { initialSensorStates } from "@/constants/Common";
 
 export default function HomeScreen() {
   const [logging, setLogging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [sensorStates, setSensorStates] = useState<SensorState>(initialSensorStates);
   const [availableSensors, setAvailableSensors] = useState<SensorState>(initialSensorStates);
-
-  const cardColor = useThemeColor({ light: "#f3f3f3", dark: "#2C2C2E" });
-  const separatorColor = useThemeColor({ light: "#C6C6C8", dark: "#38383A" });
-  const textColor = useThemeColor({ light: "#000000", dark: "#FFFFFF" });
-
-  const toggleSensor = (sensor: keyof SensorState) => {
-    setSensorStates((prev) => ({ ...prev, [sensor]: !prev[sensor] }));
-  };
 
   useEffect(() => {
     async function callDetectSensors() {
@@ -81,32 +64,8 @@ export default function HomeScreen() {
       <ThemedView style={styles.textContainer}>
         <ThemedText type="default">Step 1: Select the sensors you want to log</ThemedText>
         <ThemedText type="default">Step 2: Click on the "Start Logging" button</ThemedText>
+        <ThemedText type="defaultSemiBold" style={styles.themedtext_note}>Note: You can change which sensors to log in settings page</ThemedText>
       </ThemedView>
-
-      <View style={[styles.sensorContainer, { backgroundColor: cardColor }]}>
-        <ThemedText type="defaultSemiBold" style={styles.sensorHeaderText}>
-          Available Sensors
-        </ThemedText>
-        {Object.keys(sensorStates).map((sensor, index) => (
-          <View key={sensor}>
-            <View style={styles.sensorToggle}>
-              <ThemedText style={{ color: textColor }}>
-                {sensor === "gps"
-                  ? sensor.toUpperCase()
-                  : sensor.charAt(0).toUpperCase() + sensor.slice(1)}
-              </ThemedText>
-              <ThemedSwitch
-                onValueChange={() => toggleSensor(sensor as keyof SensorState)}
-                value={sensorStates[sensor as keyof SensorState]}
-                disabled={!availableSensors[sensor as keyof SensorState]}
-              />
-            </View>
-            {index < Object.keys(sensorStates).length - 1 && (
-              <View style={[styles.separator, { backgroundColor: separatorColor }]} />
-            )}
-          </View>
-        ))}
-      </View>
 
       <TouchableOpacity
         style={[styles.fullWidthButton, logging ? styles.stopLoggingButton : null]}
@@ -132,6 +91,10 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginBottom: 10,
+    gap: 4,
+  },
+  themedtext_note: {
+    marginTop: 10,
   },
   fullWidthButton: {
     alignItems: "center",
@@ -148,26 +111,5 @@ const styles = StyleSheet.create({
   },
   stopLoggingButton: {
     backgroundColor: "#FF3B30",
-  },
-  sensorContainer: {
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  sensorHeaderText: {
-    fontSize: 20,
-    fontWeight: "600",
-    padding: 16,
-    paddingBottom: 8,
-  },
-  sensorToggle: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-  },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    marginLeft: 16,
   },
 });
