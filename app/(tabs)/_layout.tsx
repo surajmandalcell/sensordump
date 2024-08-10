@@ -32,11 +32,11 @@ export default function TabLayout() {
             style={{
               ...StyleSheet.absoluteFillObject,
               backgroundColor:
-                colorScheme === "light" ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 1)",
+                colorScheme === "light" ? "rgba(255, 255, 255, 0.5)" : "#000000",
               overflow: "hidden",
               zIndex: 1,
             }}
-            intensity={80}
+            intensity={colorScheme === "light" ? 70 : 60}
             experimentalBlurMethod="dimezisBlurView"
           />
         ),
