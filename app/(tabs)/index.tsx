@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Text, ActivityIndicator } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
-
+import { StyleSheet, TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import {
   startLogging,
   stopLogging,
@@ -12,34 +10,20 @@ import {
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { ThemedSwitch } from "@/components/ThemedSwitch";
-import { initialSensorStates } from "@/constants/Common";
+import { initializeDatabase, getSettings } from "@/lib/settings";
 
 export default function HomeScreen() {
   const [logging, setLogging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [sensorStates, setSensorStates] = useState<SensorState>(initialSensorStates);
-  const [availableSensors, setAvailableSensors] = useState<SensorState>(initialSensorStates);
+  const [sensorStates, setSensorStates] = useState<SensorState>({} as SensorState);
 
   useEffect(() => {
-    async function callDetectSensors() {
-      const sensors = await detectSensors();
-      setAvailableSensors(sensors);
-      setSensorStates({
-        ...sensors,
-        barometer: false,
-        pedometer: false,
-        light: false,
-      });
-    }
-    callDetectSensors();
-  }, []);
-
-  useEffect(() => {
-    async function requestPermissions() {
+    async function setupSensors() {
+      const settings = await getSettings();
+      setSensorStates(settings.sensorStates);
       await handlePermissions();
     }
-    requestPermissions();
+    setupSensors();
   }, []);
 
   const handleLogging = async () => {
@@ -53,7 +37,6 @@ export default function HomeScreen() {
       setLogging(!logging);
     } catch (error) {
       console.error("Error toggling logging:", error);
-      // Optionally show an error message to the user
     } finally {
       setIsLoading(false);
     }

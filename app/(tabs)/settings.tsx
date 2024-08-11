@@ -14,6 +14,7 @@ import { ThemedText } from "@/components/ThemedText";
 import Styles from "@/constants/Styles";
 import { initialSensorStates } from "@/constants/Common";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { getSettings, initializeDatabase, saveSettings } from "@/lib/settings";
 
 // Define color schemes
 const Colors = {
@@ -36,29 +37,29 @@ const Colors = {
 const TabTwoScreen: React.FC = () => {
   const colorScheme = useColorScheme();
   const themeColors = Colors[colorScheme ?? "light"];
-  const [sensorStates, setSensorStates] = useState<SensorState>(initialSensorStates);
-  const [availableSensors, setAvailableSensors] = useState<SensorState>(initialSensorStates);
+  const [sensorStates, setSensorStates] = useState<SensorState>({} as SensorState);
+  const [availableSensors, setAvailableSensors] = useState<SensorState>({} as SensorState);
 
   const cardColor = useThemeColor({ light: "#f3f3f3", dark: "#2C2C2E" });
   const separatorColor = useThemeColor({ light: "#C6C6C8", dark: "#38383A" });
   const textColor = useThemeColor({ light: "#000000", dark: "#FFFFFF" });
 
-  const toggleSensor = (sensor: keyof SensorState) => {
-    setSensorStates((prev) => ({ ...prev, [sensor]: !prev[sensor] }));
+  const toggleSensor = async (sensor: keyof SensorState) => {
+    const newSensorStates = { ...sensorStates, [sensor]: !sensorStates[sensor] };
+    setSensorStates(newSensorStates);
+    await saveSettings({ sensorStates: newSensorStates });
   };
 
   useEffect(() => {
-    async function callDetectSensors() {
+    async function setupSettings() {
+      await initializeDatabase();
       const sensors = await detectSensors();
       setAvailableSensors(sensors);
-      setSensorStates({
-        ...sensors,
-        barometer: false,
-        pedometer: false,
-        light: false,
-      });
+      
+      const settings = await getSettings();
+      setSensorStates(settings.sensorStates);
     }
-    callDetectSensors();
+    setupSettings();
   }, []);
 
   return (
