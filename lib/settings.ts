@@ -1,7 +1,9 @@
 import * as SQLite from 'expo-sqlite';
+import { Platform } from 'react-native';
 import { SensorState } from '@/lib/main';
 
 const DB_NAME = 'settings.db';
+const STORAGE_KEY = 'app_settings';
 
 export interface Settings {
   sensorStates: SensorState;
@@ -22,7 +24,7 @@ const defaultSettings: Settings = {
 let db: SQLite.SQLiteDatabase | null = null;
 
 export async function initializeDatabase(): Promise<void> {
-  if (!db) {
+  if (Platform.OS !== 'web' && !db) {
     db = SQLite.openDatabaseSync(DB_NAME);
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS settings (
@@ -34,6 +36,17 @@ export async function initializeDatabase(): Promise<void> {
 }
 
 export async function getSettings(): Promise<Settings> {
+  if (Platform.OS === 'web') {
+    const storedSettings = localStorage.getItem(STORAGE_KEY);
+    if (storedSettings) {
+      const parsedSettings = JSON.parse(storedSettings);
+      return {
+        sensorStates: { ...defaultSettings.sensorStates, ...parsedSettings.sensorStates },
+      };
+    }
+    return defaultSettings;
+  }
+
   if (!db) await initializeDatabase();
   
   const result = await db!.getFirstAsync<{ value: string }>(
@@ -52,6 +65,11 @@ export async function getSettings(): Promise<Settings> {
 }
 
 export async function saveSettings(settings: Settings): Promise<void> {
+  if (Platform.OS === 'web') {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    return;
+  }
+
   if (!db) await initializeDatabase();
   
   await db!.runAsync(
