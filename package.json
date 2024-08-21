@@ -11,7 +11,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "apk": "eas build --profile production --platform android"
+    "apk": "eas build --profile production-apk --platform android",
+    "aab": "eas build --profile production-aab --platform android"
   },
   "jest": {
     "preset": "jest-expo"
